@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Kakina Food Products Mfg. — Complete CLI project
 
 ## Setup
@@ -34,6 +33,4 @@ For an API-only demo, run `python -m uvicorn api:app --host 127.0.0.1 --port 876
 ## Limits
 
 Single-user, locally hosted academic software; no payment gateway or actual Messenger integration. Ingredient purchases and production-usage costs are separate; revenue minus ingredient usage is **not full net profit**. HTML/JS are not used. Sale cancellation does not undo a saved transaction.
-=======
-# Kakina_CaseStudy
->>>>>>> ada866c6dd675c668275ac106508df38a6a3dc60
+
