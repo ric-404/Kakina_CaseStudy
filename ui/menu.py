@@ -1,3 +1,6 @@
+
+"""Show the main menu and start the local API server."""
+
 import argparse
 import sys
 import threading
@@ -8,7 +11,7 @@ import uvicorn
 
 from api import app
 from ui.client import ApiClient, ApiError, BASE_URL
-from ui.display import main_menu, warn, success, error
+from ui.display import warn, success, error
 from ui.inputs import intask
 from ui.catalog import inventory_menu, ingredients_menu, products_menu
 from ui.production import production_menu
@@ -21,35 +24,53 @@ def dashboard(api):
     events = api.call('GET', '/api/events')
     reservations = api.call('GET', '/api/reservations')
 
-    stock_total = sum(product['stock'] for product in products)
-    available_total = sum(product['available'] for product in products)
-    open_booths = sum(event['status'] == 'open' for event in events)
-    active_reservations = sum(row['status'] == 'reserved' for row in reservations)
+    stock = 0
+    available = 0
+    open_booths = 0
+    active_reservations = 0
 
-    stats = (f'Stock: {stock_total}   '
-             f'Available: {available_total}   '
-             f'Open booths: {open_booths}   '
-             f'Active reservations: {active_reservations}')
+    for product in products:
+        stock += product['stock']
+        available += product['available']
 
-    groups = [
-        ('INVENTORY AND PRODUCTION', [
-            ('1', 'View finished product inventory'),
-            ('2', 'Ingredients and purchases'),
-            ('3', 'Products and recipes'),
-            ('4', 'Produce chocolates (weigh and count)'),
-        ]),
-        ('ORDERS AND SELLING', [
-            ('5', 'Booth events and unsold stock'),
-            ('6', 'Customer reservations'),
-            ('7', 'Record an individual sale'),
-        ]),
-        ('REPORTS AND CONTROL', [
-            ('8', 'Sales, production and purchase reports'),
-            ('9', 'Verified inventory adjustment'),
-        ]),
-        ('EXIT', [('0', 'Exit program')]),
-    ]
-    main_menu('Kakina Food Products Mfg.', stats, groups)
+    for event in events:
+        if event['status'] == 'open':
+            open_booths += 1
+
+    for reservation in reservations:
+        if reservation['status'] == 'reserved':
+            active_reservations += 1
+
+    print()
+    print('=' * 72)
+    print(' KAKINA FOOD PRODUCTS MFG.')
+    print('=' * 72)
+    print()
+    print(f' Stock: {stock}   Available: {available}   Open booths: {open_booths}   Active reservations: {active_reservations}')
+    print()
+    print()
+    print(' INVENTORY AND PRODUCTION')
+    print('-' * 72)
+    print(' [1] View finished product inventory')
+    print(' [2] Ingredients and purchases')
+    print(' [3] Products and recipes')
+    print(' [4] Produce chocolates (weigh and count)')
+    print()
+    print(' ORDERS AND SELLING')
+    print('-' * 72)
+    print(' [5] Booth events and unsold stock')
+    print(' [6] Customer reservations')
+    print(' [7] Record an individual sale')
+    print()
+    print(' REPORTS AND CONTROL')
+    print('-' * 72)
+    print(' [8] Sales, production and purchase reports')
+    print(' [9] Verified inventory adjustment')
+    print()
+    print(' EXIT')
+    print('-' * 72)
+    print(' [0] Exit program')
+    print()
 
 
 def menu(api):
@@ -93,6 +114,7 @@ def start_api():
         access_log=False,
         log_level='error'
     )
+
     server = uvicorn.Server(config)
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
@@ -100,12 +122,14 @@ def start_api():
     for attempt in range(60):
         if not thread.is_alive():
             raise RuntimeError('The local API could not start. Port 8765 may be busy.')
+
         try:
             response = httpx.get(BASE_URL + '/api/health', timeout=1)
             if response.status_code == 200:
                 return server
         except httpx.RequestError:
             pass
+
         time.sleep(0.1)
 
     raise RuntimeError('The local API did not start. Port 8765 may be busy.')
@@ -113,11 +137,15 @@ def start_api():
 
 def main():
     parser = argparse.ArgumentParser(description='Kakina CLI application')
-    parser.add_argument('--connect', action='store_true',
-                        help='Connect to an API server already running on port 8765')
+    parser.add_argument(
+        '--connect',
+        action='store_true',
+        help='Connect to an API server already running on port 8765'
+    )
     args = parser.parse_args()
 
     server = None
+
     try:
         if not args.connect:
             try:
@@ -127,9 +155,11 @@ def main():
 
             if result is not None:
                 raise RuntimeError('Port 8765 is already serving HTTP. Stop it or use --connect.')
+
             server = start_api()
 
         client = ApiClient()
+
         try:
             menu(client)
         finally:
@@ -138,6 +168,7 @@ def main():
     except RuntimeError as exc:
         error(str(exc))
         sys.exit(1)
+
     finally:
         if server is not None:
             server.should_exit = True
