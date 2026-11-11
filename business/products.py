@@ -1,5 +1,3 @@
-"""Add, edit, and archive chocolate products."""
-
 from core import RuleError, next_id, text_value, peso, active_product
 from business.inventory import allocated, reserved
 

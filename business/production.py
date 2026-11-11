@@ -1,5 +1,3 @@
-"""Record the actual ingredients used and finished chocolates produced."""
-
 from decimal import Decimal, ROUND_HALF_UP
 from core import (RuleError, next_id, active_product, whole_number, valid_date,
                   optional_text, decimal_amount, as_decimal)

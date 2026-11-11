@@ -1,5 +1,3 @@
-"""Handle booth events, customer reservations, and individual sales."""
-
 from datetime import date
 from core import (RuleError, get, next_id, text_value, valid_date,
                   whole_number, valid_choice, active_product, peso, optional_text)

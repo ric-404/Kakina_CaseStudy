@@ -1,5 +1,3 @@
-"""Calculate reports from the saved sales, production, and purchases."""
-
 from core import valid_date, get
 
 

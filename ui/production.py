@@ -1,5 +1,3 @@
-"""Terminal screen for recording chocolate production."""
-
 from ui.display import heading, section, show_table, show_summary, qty_text
 from ui.inputs import ask_date, intask, amountask, ask_optional, confirm
 from ui.catalog import inventory, show_ingredients

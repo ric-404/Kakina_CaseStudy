@@ -1,5 +1,3 @@
-"""Ingredients, purchases, stock costs, and product recipes."""
-
 from datetime import date as CalendarDate
 from decimal import Decimal, ROUND_HALF_UP
 from core import (RuleError, get, next_id, text_value, valid_choice,

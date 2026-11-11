@@ -1,5 +1,3 @@
-"""Send requests from the terminal menus to the local FastAPI server."""
-
 import httpx
 
 BASE_URL = 'http://127.0.0.1:8765'

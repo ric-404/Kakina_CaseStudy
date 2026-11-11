@@ -1,5 +1,3 @@
-"""Show the main menu and start the local API server."""
-
 import argparse
 import sys
 import threading

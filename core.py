@@ -1,5 +1,3 @@
-"""JSON storage and reusable validation for the Kakina CLI application."""
-
 import json
 import os
 import tempfile

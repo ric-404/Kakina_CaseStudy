@@ -1,5 +1,3 @@
-"""Finished product inventory and stock corrections."""
-
 from datetime import date
 from core import RuleError, get, next_id, whole_number, text_value, active_product
 
